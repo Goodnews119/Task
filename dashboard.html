@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Task Reward — Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html">
+        <svg class="logo" width="36" height="36" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" fill="#3b82f6"></circle>
+          <path d="M7 12l3 3 7-7" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="brand-name">Task Reward</span>
+      </a>
+      <nav class="nav">
+        <a href="index.html">Home</a>
+        <a href="dashboard.html" class="active">Dashboard</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="section container">
+    <h1>Task Dashboard</h1>
+    <p class="lead">Manage your tasks and earn reward points for each completed one 🎯</p>
+
+    <div class="dashboard">
+      <form id="taskForm" class="task-form">
+        <input type="text" id="taskName" placeholder="New task..." required />
+        <input type="number" id="taskReward" placeholder="Points" min="1" max="100" required />
+        <button type="submit" class="btn btn-primary">Add Task</button>
+      </form>
+
+      <div class="stats">
+        <p>Total Points: <strong id="totalPoints">0</strong></p>
+        <p>Tasks Completed: <strong id="completedCount">0</strong></p>
+      </div>
+
+      <ul id="taskList" class="task-list"></ul>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>© <span id="year"></span> Task Reward — Stay motivated!</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>
+    // Dashboard functionality
+    document.addEventListener('DOMContentLoaded', () => {
+      const taskForm = document.getElementById('taskForm');
+      const taskList = document.getElementById('taskList');
+      const totalPointsEl = document.getElementById('totalPoints');
+      const completedCountEl = document.getElementById('completedCount');
+      const year = new Date().getFullYear();
+      document.getElementById('year').textContent = year;
+
+      let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+      function saveTasks() {
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+      }
+
+      function renderTasks() {
+        taskList.innerHTML = '';
+        let totalPoints = 0;
+        let completed = 0;
+
+        tasks.forEach((task, i) => {
+          const li = document.createElement('li');
+          li.innerHTML = `
+            <label>
+              <input type="checkbox" ${task.done ? 'checked' : ''} data-index="${i}">
+              <span>${task.name}</span>
+              <span class="reward">+${task.reward}</span>
+            </label>
+            <button class="delete" data-index="${i}">🗑️</button>
+          `;
+
+          if (task.done) {
+            li.classList.add('done');
+            totalPoints += Number(task.reward);
+            completed++;
+          }
+
+          taskList.appendChild(li);
+        });
+
+        totalPointsEl.textContent = totalPoints;
+        completedCountEl.textContent = completed;
+      }
+
+      taskForm.addEventListener('submit', e => {
+        e.preventDefault();
+        const name = document.getElementById('taskName').value.trim();
+        const reward = document.getElementById('taskReward').value.trim();
+
+        if (!name || !reward) return;
+
+        tasks.push({ name, reward, done: false });
+        saveTasks();
+        renderTasks();
+        taskForm.reset();
+      });
+
+      taskList.addEventListener('change', e => {
+        if (e.target.matches('input[type="checkbox"]')) {
+          const idx = e.target.dataset.index;
+          tasks[idx].done = e.target.checked;
+          saveTasks();
+          renderTasks();
+        }
+      });
+
+      taskList.addEventListener('click', e => {
+        if (e.target.classList.contains('delete')) {
+          const idx = e.target.dataset.index;
+          tasks.splice(idx, 1);
+          saveTasks();
+          renderTasks();
+        }
+      });
+
+      renderTasks();
+    });
+  </script>
+</body>
+</html>
