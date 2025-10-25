@@ -1,0 +1,55 @@
+.dashboard {
+  margin-top: 20px;
+}
+
+.task-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.task-form input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #e6eefc;
+  border-radius: 8px;
+}
+
+.task-form input[type="number"] {
+  width: 90px;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+#taskList {
+  list-style: none;
+  padding: 0;
+}
+
+#taskList li {
+  background: white;
+  padding: 10px;
+  margin-bottom: 6px;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#taskList li.done span:first-child {
+  text-decoration: line-through;
+  color: #94a3b8;
+}
+
+.delete {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+}
